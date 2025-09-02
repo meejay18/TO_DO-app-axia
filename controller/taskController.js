@@ -121,3 +121,32 @@ export const deleteTask = async (req, res, next) => {
     next(error)
   }
 }
+export const updateTaskStatus = async (req, res, next) => {
+  const { taskId } = req.params
+  const { id, role } = req.user
+  const { status, completed } = req.body
+  try {
+    const task = await taskModel.findById(taskId)
+
+    if (!task) {
+      return res.status(404).json({
+        message: 'Task not found',
+      })
+    }
+    console.log(task.creator)
+
+    if (task.creator.toString() !== id || role !== 'admin') {
+      return res.status(403).json({
+        message: 'You cannot perform this operation',
+      })
+    }
+
+    const updatedStatus = await taskModel.findByIdAndUpdate(taskId, { status, completed }, { new: true })
+    return res.status(200).json({
+      message: 'Task status updated successfully',
+      data: updatedStatus,
+    })
+  } catch (error) {
+    next(error)
+  }
+}
