@@ -111,12 +111,14 @@ export const updateUser = async (req, res, next) => {
         message: 'User not found',
       })
     }
-    if (id !== userId || role !== 'admin') {
+    const isOwner = user.id === id
+    const isAdmin = role === 'admin'
+
+    if (!isOwner && !isAdmin) {
       return res.status(403).json({
-        message: 'forbidden. you cannot perform this task',
+        message: 'You cannot carry out this operation',
       })
     }
-
     const updatedUser = await userModel.findByIdAndUpdate(userId, { ...data }, { new: true })
 
     return res.status(200).json({
