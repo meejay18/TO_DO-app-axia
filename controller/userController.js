@@ -129,3 +129,24 @@ export const updateUser = async (req, res, next) => {
     next(error)
   }
 }
+export const deleteUser = async (req, res, next) => {
+  const { id } = req.user
+  const { userId } = req.params
+
+  try {
+    const user = await userModel.findById(id)
+    if (!user) {
+      return res.status(404).json({
+        message: 'User not found',
+      })
+    }
+    const deletedUser = await userModel.findByIdAndDelete(userId)
+
+    return res.status(200).json({
+      message: 'user deleted',
+      data: deletedUser,
+    })
+  } catch (error) {
+    next(error)
+  }
+}
