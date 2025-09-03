@@ -2,6 +2,8 @@ import express from 'express'
 import {
   createTask,
   deleteTask,
+  filterCategory,
+  filterDuedate,
   getAllTasks,
   getOneTask,
   updateTask,
@@ -19,5 +21,8 @@ route.get('/getAllTask', authentication, isAdmin, getAllTasks)
 route.put('/updateTask/:taskId', authentication, userAndAdmin, updateTask)
 route.delete('/deleteTask/:taskId', authentication, userAndAdmin, deleteTask)
 route.put('/updateStatus/:taskId', authentication, updateTaskStatus)
+route.get('/taskCat/:category', authentication, filterCategory)
+route.get('/taskDate/:dueDate', authentication, filterDuedate)
+// route.get('/getByCatAndDate', authentication, filterTaskByCategoryandDate)
 
 export default route

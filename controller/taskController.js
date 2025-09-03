@@ -133,7 +133,6 @@ export const updateTaskStatus = async (req, res, next) => {
         message: 'Task not found',
       })
     }
-    console.log(task.creator)
 
     if (task.creator.toString() !== id || role !== 'admin') {
       return res.status(403).json({
@@ -145,6 +144,48 @@ export const updateTaskStatus = async (req, res, next) => {
     return res.status(200).json({
       message: 'Task status updated successfully',
       data: updatedStatus,
+    })
+  } catch (error) {
+    next(error)
+  }
+}
+
+export const filterCategory = async (req, res, next) => {
+  const { category } = req.params
+  const { id } = req.user
+  try {
+    const task = await taskModel.find({ creator: id, category })
+
+    if (task.length === 0) {
+      return res.status(404).json({
+        message: 'No task with this category',
+      })
+    }
+
+    return res.status(200).json({
+      message: 'Task filtered by category',
+      data: task,
+    })
+  } catch (error) {
+    next(error)
+  }
+}
+export const filterDuedate = async (req, res, next) => {
+  const { dueDate } = req.params
+  const { id } = req.user
+
+  try {
+    const task = await taskModel.find({ creator: id, dueDate: { $lte: new Date(dueDate) } })
+
+    if (task.length === 0) {
+      return res.status(404).json({
+        message: `No task on or before ${dueDate}`,
+      })
+    }
+
+    return res.status(200).json({
+      message: `Tasks due on or before ${dueDate}`,
+      data: task,
     })
   } catch (error) {
     next(error)
